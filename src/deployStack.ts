@@ -14,6 +14,7 @@ type DeployStack = {
   stackDefinitionFile: string
   templateVariables?: object
   image?: string
+  pullImage?: boolean
 }
 
 enum StackType {
@@ -57,7 +58,8 @@ export async function deployStack({
   stackName,
   stackDefinitionFile,
   templateVariables,
-  image
+  image,
+  pullImage
 }: DeployStack): Promise<void> {
   const portainerApi = new PortainerApi(portainerHost)
 
@@ -88,7 +90,8 @@ export async function deployStack({
         },
         {
           env: existingStack.Env,
-          stackFileContent: stackDefinitionToDeploy
+          stackFileContent: stackDefinitionToDeploy,
+          pullImage
         }
       )
       core.info('Successfully updated existing stack')

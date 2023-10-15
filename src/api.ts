@@ -17,7 +17,7 @@ type StackData = {
 type CreateStackParams = { type: number; method: string; endpointId: EndpointId }
 type CreateStackBody = { name: string; stackFileContent: string; swarmID?: string }
 type UpdateStackParams = { endpointId: EndpointId }
-type UpdateStackBody = { env: EnvVariables; stackFileContent: string }
+type UpdateStackBody = { env: EnvVariables; stackFileContent: string; pullImage?: boolean }
 
 export class PortainerApi {
   private axiosInstance
