@@ -36,6 +36,7 @@ inputs:
   pull-image:
     required: false
     description: 'Force a pulling to current image with the original tag though the image is already the latest'
+    default: false
 
 runs:
   using: 'node12'
