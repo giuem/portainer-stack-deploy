@@ -93,7 +93,9 @@ export async function deployStack({
           stackFileContent: stackDefinitionToDeploy,
           pullImage
         }
-      )
+      ).then(res => {
+        core.info(JSON.stringify(res.data))
+      })
       core.info('Successfully updated existing stack')
     } else {
       core.info('Deploying new stack...')
