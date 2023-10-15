@@ -94,9 +94,10 @@ export async function deployStack({
           pullImage
         }
       ).then(res => {
+        core.info("---")
         core.info(JSON.stringify(res.data))
       })
-      core.info('Successfully updated existing stack')
+      core.info('Successfully updated existing stack ---')
     } else {
       core.info('Deploying new stack...')
       await portainerApi.createStack(
