@@ -37,7 +37,7 @@ class PortainerApi {
         await this.axiosInstance.post('/stacks', body, { params });
     }
     async updateStack(id, params, body) {
-        await this.axiosInstance.put(`/stacks/${id}`, body, { params });
+        return await this.axiosInstance.put(`/stacks/${id}`, body, { params });
     }
 }
 exports.PortainerApi = PortainerApi;
@@ -107,7 +107,7 @@ function generateNewStackDefinition(stackDefinitionFile, templateVariables, imag
     core.info(`Inserting image ${image} into the stack definition`);
     return stackDefinition.replace(new RegExp(`${imageWithoutTag}(:.*)?\n`), `${image}\n`);
 }
-async function deployStack({ portainerHost, username, password, swarmId, endpointId, stackName, stackDefinitionFile, templateVariables, image }) {
+async function deployStack({ portainerHost, username, password, swarmId, endpointId, stackName, stackDefinitionFile, templateVariables, image, pullImage }) {
     const portainerApi = new api_1.PortainerApi(portainerHost);
     const stackDefinitionToDeploy = generateNewStackDefinition(stackDefinitionFile, templateVariables, image);
     core.debug(stackDefinitionToDeploy);
@@ -126,9 +126,13 @@ async function deployStack({ portainerHost, username, password, swarmId, endpoin
                 endpointId: existingStack.EndpointId
             }, {
                 env: existingStack.Env,
-                stackFileContent: stackDefinitionToDeploy
+                stackFileContent: stackDefinitionToDeploy,
+                pullImage
+            }).then(res => {
+                core.info("---");
+                core.info(JSON.stringify(res.data));
             });
-            core.info('Successfully updated existing stack');
+            core.info('Successfully updated existing stack ---');
         }
         else {
             core.info('Deploying new stack...');
@@ -223,6 +227,9 @@ async function run() {
         const image = core.getInput('image', {
             required: false
         });
+        const pullImage = core.getBooleanInput('pull-image', {
+            required: false
+        });
         await (0, deployStack_1.deployStack)({
             portainerHost,
             username,
@@ -232,7 +239,8 @@ async function run() {
             stackName,
             stackDefinitionFile,
             templateVariables: templateVariables ? JSON.parse(templateVariables) : undefined,
-            image
+            image,
+            pullImage
         });
         core.info('✅ Deployment done');
     }
